@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JERRY X RNGGA V1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #1e293b;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* --- ANIMATIONS --- */
+        
+        /* 1. Staggered Slide Up (Untuk Menu Dashboard) */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-up {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0; /* Mulai invisible */
+        }
+
+        /* Delays untuk efek berurutan */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+
+        /* 2. Zoom In Smooth (Untuk Buka Fitur) */
+        @keyframes zoomInSmooth {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+                filter: blur(4px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+        
+        .animate-interface-open {
+            animation: zoomInSmooth 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* 3. Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* 4. Pulse Glow */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(15, 23, 42, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* 5. Music Wave Animation (Spesial Spotify) */
+        .music-wave {
+            display: flex;
+            align-items: center;
+            height: 20px;
+            gap: 3px;
+        }
+        .music-bar {
+            width: 4px;
+            background: white;
+            border-radius: 2px;
+            animation: music-dance 1s infinite ease-in-out;
+        }
+        .music-bar:nth-child(1) { animation-delay: 0.1s; height: 40%; }
+        .music-bar:nth-child(2) { animation-delay: 0.3s; height: 70%; }
+        .music-bar:nth-child(3) { animation-delay: 0.5s; height: 100%; }
+        .music-bar:nth-child(4) { animation-delay: 0.2s; height: 60%; }
+        
+        @keyframes music-dance {
+            0%, 100% { height: 20%; }
+            50% { height: 100%; }
+        }
+
+        /* Card Hover Effects - Lebih Smooth */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255,255,255, 0.8);
+        }
+
+        /* Toast Notification */
+        .toast {
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Chat Specific Styles */
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+            animation: slideUpFade 0.3s ease-out forwards; /* Pesan chat juga animasi */
+            transform-origin: bottom;
+        }
+
+        .chat-user {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+
+        .chat-ai {
+            background: white;
+            color: #334155;
+            border-bottom-left-radius: 4px;
+            margin-right: auto;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Typing Indicator */
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Markdown Styles */
+        .chat-content ul { list-style-type: disc; margin-left: 20px; }
+        .chat-content ol { list-style-type: decimal; margin-left: 20px; }
+        .chat-content p { margin-bottom: 8px; }
+        .chat-content p:last-child { margin-bottom: 0; }
+        .chat-content code { background: rgba(0,0,0,0.1); padding: 2px 4px; rounded: 4px; font-family: monospace; }
+        .chat-content pre { background: #1e293b; color: #f1f5f9; padding: 10px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
+        .chat-content strong { font-weight: 600; }
+        
+        /* Spotify Interface Styles */
+        .spotify-tab-active {
+            background-color: #1DB954;
+            color: white;
+            border-color: #1DB954;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3);
+        }
+        .spotify-tab-inactive {
+            background-color: white;
+            color: #4b5563;
+            border-color: #e5e7eb;
+        }
+        .spotify-tab-inactive:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Secret Menu Specifics */
+        .secret-bg {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .secret-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            transition: all 0.3s;
+        }
+        .secret-btn:hover {
+            border-color: #8b5cf6;
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- LIVE VIDEO BACKGROUND -->
+    <div class="fixed top-0 left-0 w-full h-full -z-20">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+            <source src="https://files.catbox.moe/60f4px.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <!-- Overlay gelap -->
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+    </div>
+
+    <!-- WELCOME SCREEN -->
+    <section id="welcome-screen" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center transition-all duration-700 ease-in-out">
+        <div class="max-w-md w-full bg-white/90 shadow-2xl rounded-3xl p-10 fade-in-up border border-white/50">
+            <!-- Mascot Image -->
+            <div class="mb-6 inline-flex items-center justify-center w-32 h-32 rounded-full bg-white/50 mb-4 shadow-lg overflow-hidden border-4 border-white relative animate-float">
+                <img src="https://files.catbox.moe/7j1bli.jpg" 
+                     alt="Mascot" 
+                     class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+            </div>
+            
+            <!-- Dialogue -->
+            <div class="bg-blue-50 text-blue-800 px-4 py-2 rounded-xl mb-6 relative text-sm font-medium inline-block shadow-sm">
+                "WELCOME! Tolong isi pin yang udah disediain Gazy Ya."
+                <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-50 rotate-45"></div>
+            </div>
+
+            <h1 class="text-2xl font-bold mb-6 text-slate-800">Security Check</h1>
+            
+            <!-- PIN Input Area -->
+            <div class="mb-6 relative">
+                <input type="password" id="pin-input" placeholder="Masukkan PIN (4 Digit)" maxlength="4" 
+                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-center text-2xl tracking-[0.5em] text-slate-800 font-bold placeholder:tracking-normal placeholder:text-sm placeholder:font-normal">
+                <p id="pin-error" class="text-rose-500 text-xs mt-2 font-semibold hidden animate-bounce">
+                    <i class="fas fa-times-circle mr-1"></i> PIN Salah! Coba lagi.
+                </p>
+            </div>
+            
+            <button onclick="checkPin()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform active:scale-95 animate-pulse-glow">
+                <i class="fas fa-lock-open mr-2"></i> Masuk Dashboard
+            </button>
+            <p class="mt-6 text-xs text-slate-500">Versi 2.8 (Demo Fallback)</p>
+        </div>
+    </section>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="main-dashboard" class="hidden container mx-auto px-6 py-10 max-w-5xl flex-grow flex flex-col min-h-screen">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-12 animate-slide-up">
+            <div>
+                <h2 class="text-2xl font-bold text-white drop-shadow-md">Jerry <span class="text-slate-300">X</span> Rngga</h2>
+                <p class="text-sm text-slate-200 font-medium drop-shadow-sm">Dashboard Panel</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex text-right mr-2">
+                    <p class="text-xs font-semibold text-slate-800 bg-white/80 backdrop-blur-sm px-2 py-1 rounded">Status: Active</p>
+                    <p class="text-[10px] text-white mt-1 font-medium drop-shadow-md" id="date-display">Jan 2024</p>
+                </div>
+                <div class="w-10 h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-white hover:scale-110 transition-transform cursor-pointer">
+                    <img src="https://files.catbox.moe/7j1bli.jpg" 
+                         alt="Profile" 
+                         class="w-full h-full object-cover">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 pb-20">
+
+            <!-- Card 1: Chat AI -->
+            <div onclick="triggerFeature('Chat AI')" class="feature-card glass-card p-6 rounded-3xl cursor-pointer group relative overflow-hidden shadow-sm hover:shadow-md border border-white/60 animate-slide-up delay-100">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-robot text-6xl text-blue-500 transform group-hover:rotate-12 transition-transform duration-500"></i>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <i class="fas fa-comments text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Chat With AI</h3>
+                <p class="text-sm text-slate-500">Asisten cerdas untuk menjawab pertanyaan Anda.</p>
+                <div class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                    Buka Fitur <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Card 2: Spotify Downloader -->
+            <div onclick="triggerFeature('Spotify Downloader')" class="feature-card glass-card p-6 rounded-3xl cursor-pointer group relative overflow-hidden shadow-sm hover:shadow-md border border-white/60 animate-slide-up delay-200">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fab fa-spotify text-6xl text-green-500 transform group-hover:rotate-12 transition-transform duration-500"></i>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-green-500 text-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <i class="fas fa-music text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Spotify Downloader</h3>
+                <p class="text-sm text-slate-500">Download Lagu, Album & Cari Musik.</p>
+                <div class="mt-4 flex items-center text-green-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                    Buka Fitur <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Card 3: Tiktok Downloader (UNLOCKED) -->
+            <div onclick="triggerFeature('Tiktok Downloader')" class="feature-card glass-card p-6 rounded-3xl cursor-pointer group relative overflow-hidden shadow-sm hover:shadow-md border border-white/60 animate-slide-up delay-300">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fa-brands fa-tiktok text-6xl text-slate-800 transform group-hover:rotate-12 transition-transform duration-500"></i>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <i class="fas fa-cloud-download-alt text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Tiktok Downloader</h3>
+                <p class="text-sm text-slate-500">Download video tanpa watermark (NO ADS).</p>
+                <div class="mt-4 flex items-center text-slate-800 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                    Buka Fitur <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Card 4: Secret Menu -->
+            <div onclick="triggerFeature('Secret Menu')" class="feature-card glass-card p-6 rounded-3xl cursor-pointer group relative overflow-hidden shadow-sm hover:shadow-md border border-white/60 animate-slide-up delay-400">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class="fas fa-user-secret text-6xl text-violet-500 transform group-hover:rotate-12 transition-transform duration-500"></i>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <i class="fas fa-crown text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Secret Menu</h3>
+                <p class="text-sm text-slate-500">Fitur eksklusif tersembunyi (VIP).</p>
+                <div class="mt-4 flex items-center text-violet-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                    Buka Fitur <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SECRET MENU ATTENTION MODAL -->
+    <div id="secret-warning" class="hidden fixed inset-0 z-[70] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-interface-open">
+        <div class="max-w-md w-full border-2 border-red-600 p-8 rounded-xl bg-black relative shadow-[0_0_50px_rgba(220,38,38,0.5)] transform transition-all hover:scale-105">
+            <i class="fas fa-exclamation-triangle text-6xl text-red-600 mb-6 animate-pulse"></i>
+            <h2 class="text-3xl font-bold text-red-500 tracking-widest mb-4">ATTENTION</h2>
+            <p class="text-gray-300 mb-8 font-mono text-sm leading-relaxed">
+                Anda memasuki area <span class="text-red-400 font-bold">MENU RAHASIA</span>.<br>
+                Gunakan alat ini dengan bijak dan bertanggung jawab. Segala risiko ditanggung pengguna.
+            </p>
+            <button onclick="openSecretMenuInterface()" class="w-full py-3 bg-red-900 border border-red-600 text-red-100 font-bold rounded hover:bg-red-700 transition-all uppercase tracking-wider active:scale-95">
+                Lanjutkan (I Understand)
+            </button>
+            <button onclick="closeInterface('secret-warning')" class="mt-4 text-xs text-gray-500 hover:text-gray-300 underline">
+                Kembali ke Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- SECRET MENU INTERFACE -->
+    <div id="secret-interface" class="hidden fixed inset-0 z-[60] secret-bg flex flex-col h-full overflow-y-auto animate-interface-open">
+        <!-- Header -->
+        <header class="bg-slate-900/50 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
+            <button onclick="closeInterface('secret-interface')" class="w-10 h-10 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-sm">Secret Menu</h3>
+                    <p class="text-xs text-slate-400">VIP Access Granted</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow p-6 max-w-4xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Subdomain Scan -->
+                <button onclick="toggleSubdomainScan()" class="secret-btn p-6 rounded-xl text-left group animate-slide-up delay-100">
+                    <div class="w-12 h-12 rounded-lg bg-violet-900/50 text-violet-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-violet-500/30">
+                        <i class="fas fa-network-wired text-2xl"></i>
+                    </div>
+                    <h4 class="text-white font-bold text-lg mb-1">Subdomain Scan</h4>
+                    <p class="text-slate-400 text-xs">Pindai subdomain dari sebuah website.</p>
+                </button>
+
+                <!-- Coming Soon 1 -->
+                <button class="secret-btn p-6 rounded-xl text-left opacity-50 cursor-not-allowed animate-slide-up delay-200">
+                    <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-500 flex items-center justify-center mb-4 border border-slate-700">
+                        <i class="fas fa-lock text-2xl"></i>
+                    </div>
+                    <h4 class="text-slate-300 font-bold text-lg mb-1">Coming Soon</h4>
+                    <p class="text-slate-500 text-xs">Fitur sedang dikembangkan.</p>
+                </button>
+
+                <!-- Coming Soon 2 -->
+                <button class="secret-btn p-6 rounded-xl text-left opacity-50 cursor-not-allowed animate-slide-up delay-300">
+                    <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-500 flex items-center justify-center mb-4 border border-slate-700">
+                        <i class="fas fa-lock text-2xl"></i>
+                    </div>
+                    <h4 class="text-slate-300 font-bold text-lg mb-1">Coming Soon</h4>
+                    <p class="text-slate-500 text-xs">Fitur sedang dikembangkan.</p>
+                </button>
+            </div>
+
+            <!-- Subdomain Scanner Tool -->
+            <div id="subdomain-tool" class="hidden mt-8 bg-slate-900 border border-slate-800 rounded-xl p-6 animate-interface-open">
+                <h3 class="text-violet-400 font-bold mb-4 flex items-center gap-2"><i class="fas fa-search"></i> Scanner Tool</h3>
+                
+                <div class="flex flex-col md:flex-row gap-3 mb-6">
+                    <input type="text" id="subdomain-input" placeholder="example.com" 
+                           class="flex-grow px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-violet-500 font-mono text-sm">
+                    <button onclick="scanSubdomain()" id="subdomain-btn" class="px-6 py-3 bg-violet-700 text-white font-bold rounded-lg hover:bg-violet-600 transition-all shadow-lg hover:shadow-violet-900/50 active:scale-95">
+                        SCAN
+                    </button>
+                </div>
+
+                <div id="subdomain-loading" class="hidden text-center py-8">
+                    <i class="fas fa-circle-notch fa-spin text-violet-500 text-3xl mb-3"></i>
+                    <p class="text-slate-400 text-sm">Memindai target...</p>
+                </div>
+
+                <div id="subdomain-result" class="hidden">
+                    <div class="bg-black/50 rounded-lg p-4 max-h-64 overflow-y-auto border border-slate-800">
+                        <pre id="subdomain-output" class="text-green-400 font-mono text-xs whitespace-pre-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT INTERFACE -->
+    <div id="chat-interface" class="hidden fixed inset-0 z-[60] bg-slate-50 flex flex-col h-full animate-interface-open">
+        <!-- Chat Header -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+            <button onclick="closeInterface('chat-interface')" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-colors">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-white">
+                    <img src="https://files.catbox.moe/7j1bli.jpg" 
+                         alt="AI Profile" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">AI Assistant</h3>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <p class="text-xs text-slate-500">Online</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Messages Area -->
+        <div id="chat-container" class="flex-grow overflow-y-auto p-4 md:p-6 flex flex-col gap-4 scroll-smooth">
+            <div class="chat-bubble chat-ai">
+                <p>Halo! Saya adalah asisten AI Jerry X Rngga. Ada yang bisa saya bantu hari ini?</p>
+            </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="p-4 bg-white border-t border-slate-200 sticky bottom-0 z-10">
+            <div class="max-w-4xl mx-auto relative flex items-end gap-2 bg-slate-100 p-2 rounded-3xl border border-transparent focus-within:border-blue-300 focus-within:bg-white transition-all">
+                <textarea id="chat-input" rows="1" placeholder="Ketik pesan Anda..." class="w-full bg-transparent border-none focus:ring-0 text-slate-800 px-4 py-3 resize-none max-h-32" style="min-height: 48px;"></textarea>
+                <button onclick="sendMessage()" id="send-btn" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed mb-1 active:scale-95">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+            <p class="text-[10px] text-center text-slate-400 mt-2">AI dapat membuat kesalahan. Mohon periksa informasi penting.</p>
+        </div>
+    </div>
+
+    <!-- TIKTOK DOWNLOADER INTERFACE -->
+    <div id="tiktok-interface" class="hidden fixed inset-0 z-[60] bg-slate-50 flex flex-col h-full overflow-y-auto animate-interface-open">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+            <button onclick="closeInterface('tiktok-interface')" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-colors">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center animate-bounce">
+                    <i class="fa-brands fa-tiktok"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">Tiktok Downloader</h3>
+                    <p class="text-xs text-slate-500">No Watermark & No Ads</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="flex-grow p-6 max-w-3xl mx-auto w-full">
+            <!-- Input Card -->
+            <div class="bg-white rounded-3xl shadow-lg p-6 mb-8 border border-slate-100 relative overflow-hidden group">
+                <div class="absolute -right-6 -bottom-6 text-slate-100 transform rotate-12 group-hover:rotate-0 transition-transform duration-700 pointer-events-none">
+                    <i class="fa-brands fa-tiktok text-9xl animate-float"></i>
+                </div>
+
+                <label class="block text-sm font-semibold text-slate-700 mb-2 relative z-10">Tempel Link Video TikTok</label>
+                <div class="flex flex-col md:flex-row gap-3 relative z-10">
+                    <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@user/video/..." 
+                           class="flex-grow px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-800 transition-all shadow-inner">
+                    <button onclick="downloadTiktok()" id="tiktok-btn" class="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-slate-400/50 hover:scale-[1.02] active:scale-95 animate-pulse-glow">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+
+            <div id="tiktok-loading" class="hidden text-center py-10">
+                <div class="relative w-16 h-16 mx-auto mb-4">
+                    <div class="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-t-slate-900 rounded-full animate-spin"></div>
+                    <i class="fa-brands fa-tiktok absolute inset-0 m-auto flex items-center justify-center text-slate-900 text-xl animate-pulse"></i>
+                </div>
+                <p class="text-slate-500 font-medium animate-pulse">Sedang mencari video...</p>
+            </div>
+
+            <div id="tiktok-result" class="hidden bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 animate-slide-up">
+                <div class="grid md:grid-cols-2 gap-0">
+                    <div class="bg-black flex items-center justify-center p-2 min-h-[300px]">
+                        <video id="tt-video" controls class="max-h-[400px] w-full rounded-lg" controlsList="nodownload"></video>
+                    </div>
+                    <div class="p-6 flex flex-col justify-center bg-white relative">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+                        <h3 class="font-bold text-lg mb-2 text-slate-800">Video Siap!</h3>
+                        <p class="text-sm text-slate-500 mb-6">Silakan pilih format download di bawah ini.</p>
+                        <div class="space-y-3">
+                            <a id="btn-dl-video" href="#" target="_blank" class="block w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold rounded-xl text-center shadow-md hover:shadow-xl hover:translate-y-[-2px] transition-all group overflow-hidden relative active:scale-95">
+                                <span class="relative z-10 flex items-center justify-center gap-2"><i class="fas fa-video"></i> Download Video (No WM)</span>
+                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                            </a>
+                            <a id="btn-dl-watermark" href="#" target="_blank" class="block w-full py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl text-center hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95">
+                                <i class="fas fa-water mr-2"></i> Download (Watermark)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPOTIFY DOWNLOADER INTERFACE (NEW) -->
+    <div id="spotify-interface" class="hidden fixed inset-0 z-[60] bg-slate-50 flex flex-col h-full overflow-y-auto animate-interface-open">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+            <button onclick="closeInterface('spotify-interface')" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-colors">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center animate-bounce">
+                    <i class="fab fa-spotify"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">Spotify Downloader</h3>
+                    <p class="text-xs text-slate-500">Music & Albums</p>
+                </div>
+                <!-- Music Wave Visualizer -->
+                <div class="music-wave ml-2">
+                    <div class="music-bar"></div>
+                    <div class="music-bar"></div>
+                    <div class="music-bar"></div>
+                    <div class="music-bar"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="flex-grow p-6 max-w-3xl mx-auto w-full">
+            
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-6 bg-slate-200 p-1 rounded-xl">
+                <button onclick="openSpotifyTab('song')" id="tab-song" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all spotify-tab-active">
+                    <i class="fas fa-music mr-2"></i> Lagu
+                </button>
+                <button onclick="openSpotifyTab('album')" id="tab-album" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all spotify-tab-inactive">
+                    <i class="fas fa-compact-disc mr-2"></i> Album
+                </button>
+                <button onclick="openSpotifyTab('search')" id="tab-search" class="flex-1 py-2 text-sm font-bold rounded-lg transition-all spotify-tab-inactive">
+                    <i class="fas fa-search mr-2"></i> Cari
+                </button>
+            </div>
+
+            <!-- TAB CONTENT: SONG -->
+            <div id="content-song" class="block animate-slide-up">
+                <div class="bg-white rounded-3xl shadow-lg p-6 mb-8 border border-slate-100">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Link Lagu Spotify</label>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="text" id="sp-song-url" placeholder="https://open.spotify.com/track/..." 
+                               class="flex-grow px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all font-mono text-sm">
+                        <button onclick="downloadSpotifySong()" class="px-6 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-green-400/50 active:scale-95">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: ALBUM -->
+            <div id="content-album" class="hidden animate-slide-up">
+                <div class="bg-white rounded-3xl shadow-lg p-6 mb-8 border border-slate-100">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Link Album Spotify</label>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="text" id="sp-album-url" placeholder="https://open.spotify.com/album/..." 
+                               class="flex-grow px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all font-mono text-sm">
+                        <button onclick="downloadSpotifyAlbum()" class="px-6 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-green-400/50 active:scale-95">
+                            Download Album
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: SEARCH -->
+            <div id="content-search" class="hidden animate-slide-up">
+                <div class="bg-white rounded-3xl shadow-lg p-6 mb-8 border border-slate-100">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Cari Judul Lagu / Artis</label>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="text" id="sp-search-query" placeholder="Contoh: Mahalini Sial" 
+                               class="flex-grow px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all">
+                        <button onclick="searchSpotify()" class="px-6 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-green-400/50 active:scale-95">
+                            Cari
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULT AREA -->
+            <div id="sp-loading" class="hidden text-center py-10">
+                <div class="relative w-16 h-16 mx-auto mb-4">
+                    <div class="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-t-green-500 rounded-full animate-spin"></div>
+                    <i class="fab fa-spotify absolute inset-0 m-auto flex items-center justify-center text-green-600 text-xl animate-pulse"></i>
+                </div>
+                <p class="text-slate-500 font-medium animate-pulse">Memproses permintaan...</p>
+            </div>
+
+            <div id="sp-result" class="hidden space-y-4">
+                <!-- Result items will be injected here via JS -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modern Toast Notification -->
+    <div id="toast" class="toast fixed top-6 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-800 px-6 py-4 rounded-2xl shadow-2xl z-[100] flex items-center gap-4 min-w-[320px]">
+        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center shrink-0">
+            <i class="fas fa-lock"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-sm">Notifikasi</h4>
+            <p class="text-xs text-slate-500" id="toast-message">Pesan notifikasi.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const API_KEY = "AIzaSyALxAneDRMwWxg7kiDYL2PoXcPv2p1tVOk"; // Gemini API
+        
+        // RAPIDAPI CONFIGURATION
+        const RAPID_KEY = "f57c829ab4msh70fe23ce1b5059ap1c7fddjsnf4cabf208fa4";
+        const RAPID_TIKTOK_HOST = "tiktok-downloader-download-tiktok-videos-without-watermark.p.rapidapi.com";
+        const RAPID_SPOTIFY_HOST = "spotify-downloader9.p.rapidapi.com";
+        const RAPID_SPOTIFY_SEARCH_HOST = "spotify23.p.rapidapi.com";
+        const RAPID_SUBDOMAIN_HOST = "subdomain-scanner.p.rapidapi.com"; 
+        
+        // --- UI LOGIC ---
+
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date-display').innerText = new Date().toLocaleDateString('id-ID', dateOptions);
+
+        const chatInput = document.getElementById('chat-input');
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value === '') this.style.height = '48px';
+        });
+
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        const pinInput = document.getElementById('pin-input');
+        pinInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') checkPin();
+        });
+
+        function checkPin() {
+            const correctPin = "4767";
+            const enteredPin = pinInput.value;
+            const errorMsg = document.getElementById('pin-error');
+            
+            if (enteredPin === correctPin) {
+                pinInput.classList.remove('border-red-500', 'ring-red-100');
+                pinInput.classList.add('border-green-500', 'ring-green-100', 'text-green-600');
+                errorMsg.classList.add('hidden');
+                setTimeout(() => enterSystem(), 300);
+            } else {
+                errorMsg.classList.remove('hidden');
+                pinInput.value = '';
+                pinInput.focus();
+                pinInput.classList.add('border-red-500', 'ring-4', 'ring-red-100');
+                setTimeout(() => pinInput.classList.remove('border-red-500', 'ring-4', 'ring-red-100'), 2000);
+            }
+        }
+
+        function enterSystem() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainDashboard = document.getElementById('main-dashboard');
+            welcomeScreen.style.opacity = '0';
+            welcomeScreen.style.transform = 'scale(1.1)'; 
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                mainDashboard.classList.remove('hidden');
+            }, 500);
+        }
+
+        // --- FEATURE HANDLING ---
+        
+        let toastTimeout;
+        function triggerFeature(featureName) {
+            if (featureName === 'Chat AI') {
+                document.getElementById('main-dashboard').classList.add('hidden');
+                document.getElementById('chat-interface').classList.remove('hidden');
+                setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+            } 
+            else if (featureName === 'Tiktok Downloader') {
+                document.getElementById('main-dashboard').classList.add('hidden');
+                document.getElementById('tiktok-interface').classList.remove('hidden');
+            }
+            else if (featureName === 'Spotify Downloader') {
+                document.getElementById('main-dashboard').classList.add('hidden');
+                document.getElementById('spotify-interface').classList.remove('hidden');
+            }
+            else if (featureName === 'Secret Menu') {
+                document.getElementById('main-dashboard').classList.add('hidden');
+                document.getElementById('secret-warning').classList.remove('hidden');
+            }
+            else {
+                showToast("Fitur Terkunci", `Menu "${featureName}" akan segera hadir.`);
+            }
+        }
+
+        function openSecretMenuInterface() {
+            document.getElementById('secret-warning').classList.add('hidden');
+            document.getElementById('secret-interface').classList.remove('hidden');
+        }
+
+        function closeInterface(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastTitle = toast.querySelector('h4');
+            const iconDiv = toast.querySelector('div');
+
+            // Reset icon style just in case
+            iconDiv.className = "w-10 h-10 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center shrink-0";
+            iconDiv.innerHTML = '<i class="fas fa-lock"></i>';
+            
+            if (title.includes("Gagal") || title.includes("Error") || title.includes("Info")) {
+                iconDiv.className = "w-10 h-10 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center shrink-0";
+                iconDiv.innerHTML = '<i class="fas fa-info-circle"></i>';
+            }
+
+            toastTitle.innerText = title;
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('show');
+            clearTimeout(toastTimeout);
+            setTimeout(() => toast.classList.add('show'), 100);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // --- SUBDOMAIN SCANNER LOGIC ---
+        function toggleSubdomainScan() {
+            const tool = document.getElementById('subdomain-tool');
+            tool.classList.toggle('hidden');
+        }
+
+        async function scanSubdomain() {
+            const domain = document.getElementById('subdomain-input').value;
+            const loading = document.getElementById('subdomain-loading');
+            const resultArea = document.getElementById('subdomain-result');
+            const output = document.getElementById('subdomain-output');
+
+            if (!domain) return showToast("Error", "Masukkan domain target!");
+
+            loading.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+
+            try {
+                // Endpoint simulasi jika API gagal
+                const url = `https://${RAPID_SUBDOMAIN_HOST}/scan?domain=${domain}`;
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': RAPID_KEY,
+                        'x-rapidapi-host': RAPID_SUBDOMAIN_HOST
+                    }
+                });
+
+                if (response.status === 403) throw new Error("Akses Ditolak (403). Cek Subscription.");
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                
+                output.innerText = JSON.stringify(data, null, 2);
+                resultArea.classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                showToast("Info", "API Gagal, beralih ke Mode Demo.");
+                
+                // FALLBACK: DEMO MODE
+                // Menampilkan data simulasi agar fitur terlihat bekerja
+                const demoData = {
+                    "domain": domain,
+                    "status": "active",
+                    "subdomains": [
+                        `www.${domain}`,
+                        `mail.${domain}`,
+                        `blog.${domain}`,
+                        `api.${domain}`,
+                        `dev.${domain}`,
+                        `cpanel.${domain}`,
+                        `webmail.${domain}`
+                    ],
+                    "total": 7,
+                    "time": "0.45s",
+                    "note": "Data ini adalah simulasi (Mock Data) karena API Key belum berlangganan layanan Subdomain Scanner."
+                };
+                
+                output.innerText = JSON.stringify(demoData, null, 2);
+                resultArea.classList.remove('hidden');
+                
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // --- SPOTIFY DOWNLOADER LOGIC ---
+
+        function openSpotifyTab(tabName) {
+            ['song', 'album', 'search'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const content = document.getElementById(`content-${t}`);
+                
+                if (t === tabName) {
+                    btn.classList.remove('spotify-tab-inactive');
+                    btn.classList.add('spotify-tab-active');
+                    content.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('spotify-tab-active');
+                    btn.classList.add('spotify-tab-inactive');
+                    content.classList.add('hidden');
+                }
+            });
+            document.getElementById('sp-result').innerHTML = '';
+            document.getElementById('sp-result').classList.add('hidden');
+        }
+
+        async function fetchSpotifyAPI(endpoint, params, specificHost = RAPID_SPOTIFY_HOST) {
+            const loading = document.getElementById('sp-loading');
+            const resultArea = document.getElementById('sp-result');
+            
+            loading.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+            resultArea.innerHTML = '';
+
+            try {
+                const url = new URL(`https://${specificHost}/${endpoint}`);
+                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': RAPID_KEY,
+                        'x-rapidapi-host': specificHost
+                    }
+                });
+
+                if (response.status === 403) {
+                    throw new Error("API Subscription Required (403)");
+                }
+                
+                if (!response.ok) throw new Error("API Error");
+
+                const data = await response.json();
+                return data;
+
+            } catch (error) {
+                console.error("Spotify API Error:", error);
+                if (error.message.includes("403")) throw error;
+                showToast("Error", error.message || "Gagal mengambil data.");
+                return null;
+            } finally {
+                if(specificHost === RAPID_SPOTIFY_HOST) loading.classList.add('hidden');
+            }
+        }
+
+        async function downloadSpotifySong() {
+            const url = document.getElementById('sp-song-url').value;
+            if (!url) return showToast("Error", "Masukkan link lagu Spotify!");
+
+            let songId = url;
+            const idMatch = url.match(/(?:track|album|playlist)\/([a-zA-Z0-9]{22})/);
+            if (idMatch && idMatch[1]) songId = idMatch[1];
+
+            try {
+                const data = await fetchSpotifyAPI('tracks/', { ids: songId }, RAPID_SPOTIFY_SEARCH_HOST); 
+                document.getElementById('sp-loading').classList.add('hidden');
+                document.getElementById('sp-result').classList.remove('hidden');
+
+                if (data && (data.tracks || Array.isArray(data))) {
+                    displaySpotifyResult(data);
+                } else {
+                    throw new Error("No data from spotify23");
+                }
+
+            } catch (e) {
+                console.warn("Primary API failed, trying fallback...", e);
+                try {
+                    const dataFallback = await fetchSpotifyAPI('downloadSong', { songId: url }, RAPID_SPOTIFY_HOST);
+                    document.getElementById('sp-loading').classList.add('hidden');
+                    document.getElementById('sp-result').classList.remove('hidden');
+
+                    if (dataFallback && (dataFallback.success || dataFallback.downloadLink)) {
+                        displaySpotifyResult([dataFallback.data || { title: "Download Ready", downloadLink: dataFallback.downloadLink }]);
+                    } else {
+                        showToast("Info", "Lagu tidak ditemukan.");
+                    }
+                } catch (e2) {
+                    document.getElementById('sp-loading').classList.add('hidden');
+                    showToast("Error", "Gagal mengambil data lagu.");
+                }
+            }
+        }
+
+        async function downloadSpotifyAlbum() {
+            const url = document.getElementById('sp-album-url').value;
+            if (!url) return showToast("Error", "Masukkan link album Spotify!");
+
+            try {
+                const data = await fetchSpotifyAPI('downloadAlbum', { albumId: url }, RAPID_SPOTIFY_HOST);
+                document.getElementById('sp-loading').classList.add('hidden');
+                document.getElementById('sp-result').classList.remove('hidden');
+                
+                if (data && data.success && data.data) {
+                    displaySpotifyResult(data.data);
+                } else {
+                    showToast("Info", "Album tidak ditemukan atau belum didukung.");
+                }
+            } catch (e) {
+                document.getElementById('sp-loading').classList.add('hidden');
+            }
+        }
+
+        async function searchSpotify() {
+            const query = document.getElementById('sp-search-query').value;
+            if (!query) return showToast("Error", "Masukkan kata kunci pencarian!");
+
+            const loading = document.getElementById('sp-loading');
+            const resultArea = document.getElementById('sp-result');
+            
+            loading.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+
+            try {
+                let data = await fetchSpotifyAPI('search/', { q: query, type: 'tracks', limit: 10 }, RAPID_SPOTIFY_SEARCH_HOST);
+                
+                if (data) {
+                    loading.classList.add('hidden');
+                    resultArea.classList.remove('hidden');
+                    displaySpotifyResult(data);
+                }
+            } catch (error) {
+                if (error.message.includes("403")) {
+                    console.warn("Spotify23 Error. Fallback...");
+                    try {
+                        const dataFallback = await fetchSpotifyAPI('search', { q: query, type: 'track', limit: 10 }, RAPID_SPOTIFY_HOST);
+                        loading.classList.add('hidden');
+                        resultArea.classList.remove('hidden');
+                        if (dataFallback && dataFallback.success && dataFallback.data) {
+                            displaySpotifyResult(dataFallback.data);
+                        } else {
+                            showToast("Info", "Tidak ada hasil (Fallback).");
+                        }
+                    } catch (e2) {
+                        loading.classList.add('hidden');
+                        showToast("Error", "Gagal mencari di semua server.");
+                    }
+                } else {
+                    loading.classList.add('hidden');
+                    showToast("Error", "Gagal menghubungi server pencarian.");
+                }
+            }
+        }
+
+        function displaySpotifyResult(dataInput) {
+            const container = document.getElementById('sp-result');
+            container.innerHTML = '';
+
+            let items = [];
+            if (Array.isArray(dataInput)) {
+                items = dataInput;
+            } else if (dataInput && dataInput.tracks && Array.isArray(dataInput.tracks)) {
+                items = dataInput.tracks;
+            } else if (dataInput && dataInput.tracks && dataInput.tracks.items) {
+                items = dataInput.tracks.items;
+            } else if (dataInput && typeof dataInput === 'object') {
+                const values = Object.values(dataInput);
+                const foundArray = values.find(v => Array.isArray(v));
+                if (foundArray) items = foundArray;
+                else items = [dataInput];
+            }
+
+            if (!items || items.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500">Tidak ada data.</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                if (!item) return;
+                let itemData = item.data || item;
+                const title = itemData.name || itemData.title || "Unknown Title";
+                let artist = "Unknown Artist";
+                if (itemData.artists && itemData.artists.items && itemData.artists.items.length > 0) {
+                    artist = itemData.artists.items[0].profile.name;
+                } else if (itemData.artists && Array.isArray(itemData.artists) && itemData.artists.length > 0) {
+                    artist = itemData.artists[0].name;
+                } else if (itemData.artist) {
+                    artist = typeof itemData.artist === 'string' ? itemData.artist : (itemData.artist.name || "Unknown");
+                } else if (itemData.owner && itemData.owner.display_name) {
+                    artist = itemData.owner.display_name;
+                }
+
+                let cover = 'https://cdn-icons-png.flaticon.com/512/408/408451.png';
+                if (itemData.albumOfTrack && itemData.albumOfTrack.coverArt && itemData.albumOfTrack.coverArt.sources) {
+                    cover = itemData.albumOfTrack.coverArt.sources[0].url;
+                } else if (itemData.album && itemData.album.images && itemData.album.images.length > 0) {
+                    cover = itemData.album.images[0].url;
+                } else if (itemData.cover_url) {
+                    cover = itemData.cover_url;
+                }
+
+                let actionBtn = '';
+                const spotifyId = itemData.id;
+                
+                if (itemData.downloadLink) {
+                    actionBtn = `
+                    <a href="${itemData.downloadLink}" target="_blank" class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shrink-0">
+                        <i class="fas fa-download"></i>
+                    </a>`;
+                } else if (spotifyId) {
+                    actionBtn = `
+                    <button onclick="fillSongInput('https://open.spotify.com/track/${spotifyId}')" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all shrink-0">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 animate-slide-up hover:scale-105 transition-transform";
+                
+                card.innerHTML = `
+                    <img src="${cover}" alt="Cover" class="w-16 h-16 rounded-lg object-cover bg-slate-100 shadow-md">
+                    <div class="flex-grow overflow-hidden">
+                        <h4 class="font-bold text-slate-800 truncate text-sm">${title}</h4>
+                        <p class="text-xs text-slate-500 truncate">${artist}</p>
+                    </div>
+                    ${actionBtn}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function fillSongInput(link) {
+            openSpotifyTab('song');
+            document.getElementById('sp-song-url').value = link;
+            showToast("Info", "Link disalin! Klik Download.");
+        }
+
+        // --- TIKTOK DOWNLOADER LOGIC ---
+
+        async function downloadTiktok() {
+            const urlInput = document.getElementById('tiktok-url').value;
+            const loading = document.getElementById('tiktok-loading');
+            const result = document.getElementById('tiktok-result');
+            const btn = document.getElementById('tiktok-btn');
+
+            if (!urlInput) {
+                showToast("Error", "Harap masukkan URL Video TikTok!");
+                return;
+            }
+
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Loading...';
+
+            try {
+                const encodedUrl = encodeURIComponent(urlInput);
+                const apiUrl = `https://${RAPID_TIKTOK_HOST}/vid/index?url=${encodedUrl}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': RAPID_KEY,
+                        'x-rapidapi-host': RAPID_TIKTOK_HOST
+                    }
+                });
+                
+                if (response.status === 403) {
+                     showToast("Gagal Akses (403)", "Langganan API Key Tiktok belum aktif.");
+                     return;
+                }
+
+                const data = await response.json();
+
+                let videoUrl = null;
+                if (data.video && data.video[0]) videoUrl = data.video[0];
+                else if (data.play) videoUrl = data.play;
+                else if (data.download_url) videoUrl = data.download_url;
+
+                if (videoUrl) {
+                    const videoPlayer = document.getElementById('tt-video');
+                    videoPlayer.src = videoUrl; 
+                    videoPlayer.load();
+
+                    document.getElementById('btn-dl-video').href = videoUrl;
+                    document.getElementById('btn-dl-watermark').href = data.play_watermark || data.music || videoUrl;
+
+                    loading.classList.add('hidden');
+                    result.classList.remove('hidden');
+                    result.classList.add('animate-slide-up');
+
+                } else {
+                    showToast("Gagal API", "Video tidak ditemukan atau server sedang sibuk.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                showToast("Error Sistem", "Gagal menghubungi server. Cek koneksi internet.");
+            } finally {
+                loading.classList.add('hidden');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-download"></i> Download';
+            }
+        }
+
+        // --- CHAT LOGIC ---
+
+        async function sendMessage() {
+            const inputField = document.getElementById('chat-input');
+            const message = inputField.value.trim();
+            const container = document.getElementById('chat-container');
+            const sendBtn = document.getElementById('send-btn');
+
+            if (!message) return;
+
+            addMessage(message, 'user');
+            inputField.value = '';
+            inputField.style.height = '48px';
+            sendBtn.disabled = true;
+
+            const loadingId = addLoadingIndicator();
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+                });
+
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+
+                if (data.candidates && data.candidates[0].content) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    addMessage(aiText, 'ai');
+                } else {
+                    addMessage("Maaf, terjadi kesalahan saat menghubungi server AI.", 'ai');
+                }
+
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage("Koneksi gagal. Periksa internet Anda.", 'ai');
+            } finally {
+                sendBtn.disabled = false;
+                inputField.focus();
+            }
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chat-container');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${sender === 'user' ? 'chat-user' : 'chat-ai'}`;
+            
+            if (sender === 'ai') {
+                bubble.innerHTML = `<div class="chat-content">${marked.parse(text)}</div>`;
+            } else {
+                bubble.innerText = text;
+            }
+
+            container.appendChild(bubble);
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+        }
+
+        function addLoadingIndicator() {
+            const container = document.getElementById('chat-container');
+            const id = 'loading-' + Date.now();
+            const bubble = document.createElement('div');
+            bubble.id = id;
+            bubble.className = 'chat-bubble chat-ai';
+            bubble.innerHTML = `<div class="flex items-center gap-1"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+    </script>
+</body>
+</html>
